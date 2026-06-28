@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Özel Sayfa</title>
+    <style>
+        /* Genel Tema ve Pembe Arka Plan */
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            user-select: none; /* Metin seçimini engeller */
+        }
+
+        /* Hareketli Kalpler Animasyonu */
+        .hearts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        .heart { position: absolute; color: #ff1493; font-size: 24px; animation: float 4s linear infinite; opacity: 0.7; }
+        @keyframes float { 
+            0% { transform: translateY(100vh) scale(0.5); opacity: 1; } 
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; } 
+        }
+
+        /* Kutu Tasarımları (Giriş ve Video Ekranı) */
+        .container {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(255, 105, 180, 0.3);
+            border: 2px solid #ffb6c1;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        #main-screen { display: none; }
+
+        /* Girdiler ve Butonlar */
+        input { 
+            padding: 12px; margin: 10px 0; border: 2px solid #ff69b4; 
+            border-radius: 10px; width: 80%; outline: none; font-size: 16px;
+        }
+        button { 
+            padding: 12px 30px; background: #ff1493; color: white; 
+            border: none; border-radius: 25px; cursor: pointer; 
+            font-weight: bold; font-size: 16px; transition: 0.3s;
+            margin-top: 10px; box-shadow: 0 4px 15px rgba(255, 20, 147, 0.4);
+        }
+        button:hover { background: #c71585; transform: scale(1.05); }
+
+        /* Video Ayarları */
+        video { 
+            width: 100%; border-radius: 15px; margin-top: 20px; 
+            display: none; border: 3px solid #ff69b4; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        #error-msg { color: #d8000c; font-weight: bold; display: none; margin-top: 10px;}
+        h2 { color: #ff1493; }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="hearts" id="heart-container"></div>
+
+    <div class="container" id="login-screen">
+        <h2>💖 Sayfaya Giriş 💖</h2>
+        <input type="text" id="username" placeholder="Kullanıcı Adı" autocomplete="off"><br>
+        <input type="password" id="password" placeholder="Şifre" autocomplete="off"><br>
+        <button onclick="login()">Giriş Yap</button>
+        <p id="error-msg">Hatalı şifre girdin, tekrar dene! 💔</p>
+    </div>
+
+    <div class="container" id="main-screen">
+        <h2 id="welcome-msg"></h2>
+        <p>Sürprizi görmek için butona tıkla!</p>
+        <button id="play-btn" onclick="playMedia()">Oynat ▶️</button>
+        <br>
+        
+        <video id="myVideo" controls controlsList="nodownload">
+            <source src="Adsız sunu.mp4" type="video/mp4">
+            Tarayıcınız video oynatmayı desteklemiyor.
+        </video>
+        
+        <audio id="myAudio" loop>
+            <source src="(melody.az) 4502 - Her Şey Sensin (Live).mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        // Arka plana rastgele uçuşan kalpler ekleyen fonksiyon
+        const heartContainer = document.getElementById('heart-container');
+        setInterval(() => {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = ['💖', '💕', '💓', '💗'][Math.floor(Math.random() * 4)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            heartContainer.appendChild(heart);
+            setTimeout(() => heart.remove(), 6000); // Ekrandan çıkan kalpleri sil
+        }, 400);
+
+        // Şifre Kontrolü Sistemi
+        function login() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value;
+            
+            if(pass === 'ruhi123') {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-screen').style.display = 'block';
+                const displayName = user.length > 0 ? user : 'Gizemli Kişi';
+                document.getElementById('welcome-msg').innerText = 'Hoşgeldin ' + displayName + '! ✨';
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+
+        // Oynat Tuşuna Basınca Hem Şarkıyı Hem Videoyu Başlat
+        function playMedia() {
+            const video = document.getElementById('myVideo');
+            const audio = document.getElementById('myAudio');
+            const btn = document.getElementById('play-btn');
+            
+            btn.style.display = 'none'; // Butonu gizle
+            video.style.display = 'block'; // Videoyu göster
+            
+            // Medyaları oynat
+            video.play();
+            audio.play();
+            
+            // Video sesiyle şarkının karışmaması için şarkı sesini biraz kısıyoruz
+            audio.volume = 0.3; 
+        }
+
+        // --- EKRAN GÖRÜNTÜSÜ VE KOPYALAMA ENGELLEYİCİLERİ ---
+        
+        // Print Screen tuşunu algılayıp panoyu temizleme
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'PrintScreen') {
+                navigator.clipboard.writeText('Ekran görüntüsü almak engellenmiştir!');
+                alert('Bu sitenin ekran görüntüsünü almak yasaktır! 🛑');
+            }
+        });
+
+        // Klavye kısayollarını engelleme (Ctrl+P, Ctrl+S, F12 vs.)
+        document.addEventListener('keydown', (e) => {
+            if (
+                e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+                (e.ctrlKey && e.key === 'p') || 
+                (e.ctrlKey && e.key === 's') ||
+                (e.ctrlKey && e.key === 'c')
+            ) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
